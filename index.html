@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survival Strike</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden;  
+            cursor: none; /* Nascondi il cursore del mouse */ 
+        }
+        canvas { 
+            display: block; 
+        }
+        #hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #reload-bar-container {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 200px;
+            height: 20px;
+            background-color: grey;
+        }
+        #reload-bar {
+            height: 100%;
+            background-color: green;
+            width: 0;
+        }
+        #crosshair {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background-color: red;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .unselectable {
+            user-select: none;
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            -o-user-select: none; /* Opera */
+        }
+        #distance-display {
+            position: absolute; 
+            color: white; 
+            background-color: black; 
+            padding: 5px; 
+            border-radius: 5px; 
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="crosshair"></div>
+    <div id="distance-display" class="unselectable">Distance:</div>
+    <div id="hud" class="unselectable">
+        <span id="health">Health: 100</span>
+        <span id="ammo">Ammo: 10</span>
+    </div>
+    <div id="reload-bar-container" class="unselectable" style="display: none;">
+        <div id="reload-bar" class="unselectable"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
