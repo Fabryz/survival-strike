@@ -192,7 +192,7 @@ function reloadAmmo() {
 reloading = true;
 reloadBarContainer.style.display = 'block';
 
-const reloadTime = 2000; // Tempo di ricarica in millisecondi (2 secondi)
+const reloadTime = 1000; // Tempo di ricarica in millisecondi (2 secondi)
 let reloadProgress = 0;
 const reloadInterval = setInterval(() => {
     reloadProgress += 10;
@@ -369,6 +369,22 @@ const right = new THREE.Vector3();
 right.crossVectors(camera.up, direction);
 right.normalize();
 
+
+ // Funzione per creare un effetto quando il proiettile colpisce un ostacolo
+ function createHitEffect(position) {
+    const hitGeometry = new THREE.SphereGeometry(0.2, 8, 8);
+    const hitMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const hitEffect = new THREE.Mesh(hitGeometry, hitMaterial);
+    
+    hitEffect.position.copy(position);
+    scene.add(hitEffect);
+
+    // Rimuovi l'effetto dopo un breve periodo di tempo
+    setTimeout(() => {
+        scene.remove(hitEffect);
+    }, 300); // Durata dell'effetto in millisecondi
+}
+
 function animate() {
     requestAnimationFrame(animate);
 
@@ -393,6 +409,10 @@ function animate() {
     if (moveLeft) soldier.position.add(right.clone().multiplyScalar(moveSpeed));
     if (moveRight) soldier.position.add(right.clone().multiplyScalar(-moveSpeed));
 
+    // Controllo dei confini della mappa per il soldato
+    soldier.position.x = THREE.MathUtils.clamp(soldier.position.x, -mapSize, mapSize);
+    soldier.position.z = THREE.MathUtils.clamp(soldier.position.z, -mapSize, mapSize);
+
     // Rileva collisioni e ripristina la posizione precedente se necessario
     if (detectCollisions(soldier, obstacles)) {
         soldier.position.copy(previousPosition);
@@ -401,21 +421,6 @@ function animate() {
  // Muovi i nemici
  updateEnemyDirections();
  moveEnemies();
-
- // Funzione per creare un effetto quando il proiettile colpisce un ostacolo
-function createHitEffect(position) {
-    const hitGeometry = new THREE.SphereGeometry(0.2, 8, 8);
-    const hitMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const hitEffect = new THREE.Mesh(hitGeometry, hitMaterial);
-    
-    hitEffect.position.copy(position);
-    scene.add(hitEffect);
-
-    // Rimuovi l'effetto dopo un breve periodo di tempo
-    setTimeout(() => {
-        scene.remove(hitEffect);
-    }, 300); // Durata dell'effetto in millisecondi
-}
 
 // Aggiornamento dei proiettili (aggiornato per includere il rilevamento delle collisioni con gli ostacoli)
 bullets.forEach((bullet, index) => {
