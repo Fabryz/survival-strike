@@ -66,19 +66,22 @@ Ensure you have the following installed:
   const bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
   const bullet = new THREE.Mesh(bulletGeometry, bulletMaterial);
     ```
-Reloading: Handled using setInterval for the reload progress and setTimeout for the delay.
+* **Reloading**: Handled using setInterval for the reload progress and setTimeout for the delay.
 
-```js
-const reloadInterval = setInterval(() => {
-  // Update progress
-}, 10);
-Enemy Movement: Each enemy has a random direction which is occasionally changed.
+    ```js
+    const reloadInterval = setInterval(() => {
+    // Update progress
+    }, 10);
+    ```
 
-for (let i = 0; i < enemies.length; i++) {
-  const direction = new THREE.Vector3(Math.random() * 2 - 1, 0, Math.random() * 2 - 1).normalize();
-  enemyDirections.push(direction);
-}
-```
+* **Enemy Movement**: Each enemy has a random direction which is occasionally changed.
+
+    ```js
+    for (let i = 0; i < enemies.length; i++) {
+    const direction = new THREE.Vector3(Math.random() * 2 - 1, 0, Math.random() * 2 - 1).normalize();
+    enemyDirections.push(direction);
+    }
+    ```
 
 ## Future Improvements
 * Add more complex AI for enemies.
