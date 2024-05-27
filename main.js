@@ -5,7 +5,7 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-document.addEventListener('contextmenu', function(event) {
+document.addEventListener('contextmenu', function (event) {
     event.preventDefault();
 });
 
@@ -189,26 +189,26 @@ const reloadBar = document.getElementById('reload-bar');
 
 // Funzione di ricarica automatica (con delay e barra di progresso)
 function reloadAmmo() {
-reloading = true;
-reloadBarContainer.style.display = 'block';
+    reloading = true;
+    reloadBarContainer.style.display = 'block';
 
-const reloadTime = 1000; // Tempo di ricarica in millisecondi (2 secondi)
-let reloadProgress = 0;
-const reloadInterval = setInterval(() => {
-    reloadProgress += 10;
-    reloadBar.style.width = `${(reloadProgress / reloadTime) * 100}%`;
+    const reloadTime = 1000; // Tempo di ricarica in millisecondi
+    let reloadProgress = 0;
+    const reloadInterval = setInterval(() => {
+        reloadProgress += 10;
+        reloadBar.style.width = `${(reloadProgress / reloadTime) * 100}%`;
 
-    if (reloadProgress >= reloadTime) {
-        clearInterval(reloadInterval);
-        ammo = 10;
-        ammoDisplay.innerHTML = `Ammo: ${ammo}`;
-        reloadBarContainer.style.display = 'none';
-        reloading = false;
-    }
-}, 10);
+        if (reloadProgress >= reloadTime) {
+            clearInterval(reloadInterval);
+            ammo = 10;
+            ammoDisplay.innerHTML = `Ammo: ${ammo}`;
+            reloadBarContainer.style.display = 'none';
+            reloading = false;
+        }
+    }, 10);
 }
 
-document.addEventListener('dblclick', function(event) {
+document.addEventListener('dblclick', function (event) {
     event.preventDefault();
 });
 
@@ -343,16 +343,26 @@ function moveEnemies() {
 }
 
 // Variabili di controllo per lo zoom
-let zoomLevel = 15; // Distanza iniziale della camera dal soldato
-const zoomSpeed = 1; // Velocità dello zoom
-const minZoom = 5; // Minima distanza di zoom (più vicina al soldato)
-const maxZoom = 50; // Massima distanza di zoom (più lontana dal soldato)
+let zoomLevel = 10; // Distanza iniziale della camera dal soldato
+const zoomSpeed = 0.5; // Velocità dello zoom
+const minZoom = 1; // Minima distanza di zoom (più vicina al soldato)
+const maxZoom = 12; // Massima distanza di zoom (più lontana dal soldato)
 
 // Funzione per gestire lo zoom con la rotellina del mouse
 function handleZoom(event) {
-    // Normalizza deltaY per gestire lo zoom sia verso l'alto che verso il basso
     const delta = Math.sign(event.deltaY);
     zoomLevel = THREE.MathUtils.clamp(zoomLevel + delta * zoomSpeed, minZoom, maxZoom);
+
+    // Aggiorna la posizione della fotocamera senza influenzare l'angolo di rotazione
+    const offsetX = Math.sin(cameraRotationAngle) * zoomLevel;
+    const offsetZ = Math.cos(cameraRotationAngle) * zoomLevel;
+
+    camera.position.set(
+        soldier.position.x + offsetX,
+        soldier.position.y + 10,
+        soldier.position.z + offsetZ
+    );
+    camera.lookAt(soldier.position);
 }
 
 document.addEventListener('wheel', handleZoom);
@@ -370,12 +380,12 @@ right.crossVectors(camera.up, direction);
 right.normalize();
 
 
- // Funzione per creare un effetto quando il proiettile colpisce un ostacolo
- function createHitEffect(position) {
+// Funzione per creare un effetto quando il proiettile colpisce un ostacolo
+function createHitEffect(position) {
     const hitGeometry = new THREE.SphereGeometry(0.2, 8, 8);
     const hitMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     const hitEffect = new THREE.Mesh(hitGeometry, hitMaterial);
-    
+
     hitEffect.position.copy(position);
     scene.add(hitEffect);
 
@@ -418,91 +428,91 @@ function animate() {
         soldier.position.copy(previousPosition);
     }
 
- // Muovi i nemici
- updateEnemyDirections();
- moveEnemies();
+    // Muovi i nemici
+    updateEnemyDirections();
+    moveEnemies();
 
-// Aggiornamento dei proiettili (aggiornato per includere il rilevamento delle collisioni con gli ostacoli)
-bullets.forEach((bullet, index) => {
-    bullet.userData.velocity.add(gravity);
-    bullet.position.add(bullet.userData.velocity);
+    // Aggiornamento dei proiettili (aggiornato per includere il rilevamento delle collisioni con gli ostacoli)
+    bullets.forEach((bullet, index) => {
+        bullet.userData.velocity.add(gravity);
+        bullet.position.add(bullet.userData.velocity);
 
-    if (bullet.position.y < -1 || bullet.position.distanceTo(soldier.position) > mapSize * 2) {
-        scene.remove(bullet);
-        bullets.splice(index, 1);
-    }
+        if (bullet.position.y < -1 || bullet.position.distanceTo(soldier.position) > mapSize * 2) {
+            scene.remove(bullet);
+            bullets.splice(index, 1);
+        }
 
-    // Collisione dei proiettili con i nemici
-    enemies.forEach((enemy, enemyIndex) => {
-        if (bullet.position.distanceTo(enemy.position) < 1) {
-            enemyHPs[enemyIndex].hp -= 20;
-            const hpRatio = enemyHPs[enemyIndex].hp / 100;
-            enemyHPs[enemyIndex].bar.scale.set(hpRatio, 1, 1);
-            enemyHPs[enemyIndex].bar.material.color.setRGB(1 - hpRatio, hpRatio, 0);
+        // Collisione dei proiettili con i nemici
+        enemies.forEach((enemy, enemyIndex) => {
+            if (bullet.position.distanceTo(enemy.position) < 1) {
+                enemyHPs[enemyIndex].hp -= 20;
+                const hpRatio = enemyHPs[enemyIndex].hp / 100;
+                enemyHPs[enemyIndex].bar.scale.set(hpRatio, 1, 1);
+                enemyHPs[enemyIndex].bar.material.color.setRGB(1 - hpRatio, hpRatio, 0);
 
-            if (enemyHPs[enemyIndex].hp <= 0) {
-                scene.remove(enemy);
-                scene.remove(enemyHPs[enemyIndex].bar);
-                enemies.splice(enemyIndex, 1);
-                enemyHPs.splice(enemyIndex, 1);
+                if (enemyHPs[enemyIndex].hp <= 0) {
+                    scene.remove(enemy);
+                    scene.remove(enemyHPs[enemyIndex].bar);
+                    enemies.splice(enemyIndex, 1);
+                    enemyHPs.splice(enemyIndex, 1);
+                }
+
+                scene.remove(bullet);
+                bullets.splice(index, 1);
             }
+        });
 
-            scene.remove(bullet);
-            bullets.splice(index, 1);
-        }
+        // Collisione dei proiettili con gli ostacoli
+        obstacles.forEach((obstacle) => {
+            if (bullet.position.distanceTo(obstacle.position) < 1) {
+                createHitEffect(bullet.position);
+                scene.remove(bullet);
+                bullets.splice(index, 1);
+            }
+        });
     });
 
-    // Collisione dei proiettili con gli ostacoli
-    obstacles.forEach((obstacle) => {
-        if (bullet.position.distanceTo(obstacle.position) < 1) {
-            createHitEffect(bullet.position);
-            scene.remove(bullet);
-            bullets.splice(index, 1);
-        }
+    // Aggiornare le barre HP dei nemici
+    enemyHPs.forEach((enemyHP, index) => {
+        enemyHP.bar.position.set(enemies[index].position.x, enemies[index].position.y + 1.2, enemies[index].position.z);
+        // Fai ruotare la HP bar per essere sempre frontale rispetto alla telecamera
+        enemyHP.bar.lookAt(camera.position);
     });
-});
 
- // Aggiornare le barre HP dei nemici
- enemyHPs.forEach((enemyHP, index) => {
-     enemyHP.bar.position.set(enemies[index].position.x, enemies[index].position.y + 1.2, enemies[index].position.z);
-     // Fai ruotare la HP bar per essere sempre frontale rispetto alla telecamera
-     enemyHP.bar.lookAt(camera.position);
- });
+    // Rotazione della telecamera
+    if (rotateLeft) cameraRotationAngle -= rotationSpeed;
+    if (rotateRight) cameraRotationAngle += rotationSpeed;
 
- // Rotazione della telecamera
- if (rotateLeft) cameraRotationAngle -= rotationSpeed;
- if (rotateRight) cameraRotationAngle += rotationSpeed;
+    const offsetX = Math.sin(cameraRotationAngle) * zoomLevel;
+    const offsetZ = Math.cos(cameraRotationAngle) * zoomLevel;
 
- const offsetX = Math.sin(cameraRotationAngle) * zoomLevel;
- const offsetZ = Math.cos(cameraRotationAngle) * zoomLevel;
+    camera.position.set(
+        soldier.position.x + offsetX,
+        soldier.position.y + 10,
+        soldier.position.z + offsetZ
+    );
+    camera.lookAt(soldier.position);
 
- camera.position.set(
-     soldier.position.x + offsetX,
-     soldier.position.y + 10,
-     soldier.position.z + offsetZ
- );
- camera.lookAt(soldier.position);
-
- renderer.render(scene, camera);
+    renderer.render(scene, camera);
 }
 
 function calculateHitProbability() {
- const mouse = new THREE.Vector2(
-     (window.innerWidth / 2 / window.innerWidth) * 2 - 1,
-     - (window.innerHeight / 2 / window.innerHeight) * 2 + 1
- );
+    const mouse = new THREE.Vector2(
+        (window.innerWidth / 2 / window.innerWidth) * 2 - 1,
+        - (window.innerHeight / 2 / window.innerHeight) * 2 + 1
+    );
 
- const raycaster = new THREE.Raycaster();
- raycaster.setFromCamera(mouse, camera);
- const intersects = raycaster.intersectObjects(enemies);
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(enemies);
 
- if (intersects.length > 0) {
-     const distance = intersects[0].distance;
-     if (distance < 5) return 'green'; // Alta probabilità di colpire
-     if (distance < 10) return 'yellow'; // Probabilità media
-     return 'red'; // Bassa probabilità
- }
- return 'red'; // Nessun nemico colpibile
+    if (intersects.length > 0) {
+        const distance = intersects[0].distance;
+        if (distance < 5) return 'green'; // Alta probabilità di colpire
+        if (distance < 10) return 'yellow'; // Probabilità media
+        return 'red'; // Bassa probabilità
+    }
+    return 'red'; // Nessun nemico colpibile
 }
 
 // Avviare l'animazione
