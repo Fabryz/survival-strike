@@ -1,98 +1,113 @@
-# 3D Shooting Game
+# Survival Strike - Tactical RTS
 
-## Overview
-This project is a 3D shooting game built using the Three.js library. The player controls a soldier character, firing bullets at enemies and avoiding obstacles. The game includes functionalities such as shooting, reloading, enemy movement, collision detection, and a user interface (UI) displaying ammo count, health bars, and hit probability.
+A browser-based tactical real-time strategy game inspired by Men of War, built with Three.js.
 
-## Features
-- **Shooting Mechanism**: Fire bullets by clicking the mouse, and reload automatically when the ammo runs out.
-- **Enemy Movement**: Enemies move randomly within the boundaries of the map.
-- **Collision Detection**: Bullets can collide with enemies and obstacles, triggering appropriate responses.
-- **UI Elements**: Displays the ammo count, crosshair, hit probability, and a distance display to the nearest enemy.
-- **Zoom and Camera Control**: Zoom in and out using the mouse wheel and rotate the camera around the soldier.
+## 🎮 Overview
 
-## Prerequisites
-Ensure you have the following installed:
-- Node.js
-- npm (Node Package Manager)
-- A modern web browser (Chrome, Firefox, Edge, etc.)
+Survival Strike is a tactical RTS where you command squads of soldiers in real-time combat. Select units, issue orders, and engage in strategic warfare with an intelligent enemy AI.
 
-## Installation
-1. Clone the repository:
-    ```sh
-    git@github.com:Fabryz/survival-strike.git
-    cd survival-strike
-    ```
+## ✨ Features
 
-2. Install dependencies:
-    ```sh
-    npm install
-    ```
+### 🖱️ RTS Controls
+- **Box Selection**: Drag to select multiple units
+- **Single Selection**: Click individual units
+- **Shift Selection**: Add units to current selection
+- **Move Command**: Right-click ground to move selected units
+- **Attack Command**: Right-click enemy to engage target
+- **Formation System**: Units automatically arrange in tactical formations
 
-3. Start the development server:
-    ```sh
-    npm start
-    ```
+### 👥 Unit Classes
 
-## Usage
-1. **Movement**: 
-    - **W**: Move forward
-    - **S**: Move backward
-    - **A**: Move left
-    - **D**: Move right
+| Class | HP | Ammo | Damage | Accuracy | Role |
+|-------|----|----- |--------|----------|------|
+| **Rifleman** | 100 | 30 | 20 | 70% | Versatile infantry |
+| **Machinegunner** | 120 | 100 | 15 | 50% | Suppressive fire |
+| **Sniper** | 80 | 10 | 80 | 95% | Precision elimination |
 
-2. **Shooting**:
-    - **Click**: Fire a bullet if ammo is available.
-    - **Double Click**: Prevents default double click behavior.
+### 🎯 Combat System
+- Automatic targeting and firing
+- Ballistic projectiles with accuracy spread
+- Health bars and damage feedback
+- Unit death and removal
 
-3. **Camera Control**:
-    - **Mouse Wheel**: Zoom in and out.
-    - **Rotate Left**: Rotate the camera to the left.
-    - **Rotate Right**: Rotate the camera to the right.
+### 🎥 Camera System
+- **WASD/Arrows**: Pan camera (relative to view angle)
+- **Q/E**: Rotate camera
+- **Mouse Wheel**: Zoom in/out
+- Isometric tactical view
 
-## File Structure
-* src
-* index.html // Main HTML file
-* main.js // Main JavaScript file
-* style.css // Add styles here
-* assets // Add your assets here (textures, models, etc.)
-* package.json // npm configuration
-* README.md // This file*
+## 🚀 Installation
 
-## Technical Details
-- **Classes and Libraries**: The main library used is [Three.js](https://threejs.org/).
-- **Shooting**: Bullets are created as meshes and added to the scene. The velocity is set, and collision detection is done for each frame.
-    ```js
-  const bulletGeometry = new THREE.SphereGeometry(0.1, 8, 8);
-  const bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-  const bullet = new THREE.Mesh(bulletGeometry, bulletMaterial);
-    ```
-* **Reloading**: Handled using setInterval for the reload progress and setTimeout for the delay.
+```bash
+git clone git@github.com:Fabryz/survival-strike.git
+cd survival-strike
+npm install
+npm start
+```
 
-    ```js
-    const reloadInterval = setInterval(() => {
-    // Update progress
-    }, 10);
-    ```
+Open `http://localhost:3000/index.html` in your browser.
 
-* **Enemy Movement**: Each enemy has a random direction which is occasionally changed.
+## 🎮 Controls
 
-    ```js
-    for (let i = 0; i < enemies.length; i++) {
-    const direction = new THREE.Vector3(Math.random() * 2 - 1, 0, Math.random() * 2 - 1).normalize();
-    enemyDirections.push(direction);
-    }
-    ```
+| Action | Control |
+|--------|---------|
+| Select unit(s) | Left Click / Drag |
+| Add to selection | Shift + Click |
+| Move units | Right Click (ground) |
+| Attack enemy | Right Click (enemy) |
+| Pan camera | WASD / Arrow Keys |
+| Rotate camera | Q / E |
+| Zoom | Mouse Wheel |
 
-## Future Improvements
-* Add more complex AI for enemies.
-* Include various types of obstacles and power-ups.
-* Implement different levels and difficulty settings.
-* Enhance graphics and add sound effects.
+## 📁 Project Structure
 
-## Contributing
-Feel free to fork this repository and create pull requests. Any contributions are highly appreciated.
+```
+survival-strike/
+├── src/
+│   ├── SelectionManager.js    # Unit selection system
+│   ├── MovementController.js  # Movement and formations
+│   └── Unit.js                # Unit class with combat
+├── index.html                 # Main HTML
+├── main.js                    # Game loop
+├── server.js                  # Express server
+└── package.json
+```
 
-## License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+## 🔧 Technical Stack
 
-Enjoy playing the game
+- **Three.js** - 3D rendering engine
+- **Express** - Web server
+- **Socket.io** - Multiplayer ready (prepared)
+- **ES6 Modules** - Modern JavaScript
+
+## 🎯 Roadmap
+
+### Planned Features
+- [ ] Cover system (walls, sandbags, buildings)
+- [ ] Advanced formations (line, wedge, dispersed)
+- [ ] Tactical AI (flanking, cover seeking)
+- [ ] Vehicles (jeep, tank)
+- [ ] Fog of War
+- [ ] Minimap
+- [ ] Resource system
+- [ ] Multiplayer (PvP/Co-op)
+
+### Advanced Mechanics
+- [ ] Stance system (prone, crouch, stand)
+- [ ] Morale and suppression
+- [ ] Limited ammo and resupply
+- [ ] Medics and repairs
+- [ ] Artillery support
+- [ ] Strategic points capture
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to fork and submit pull requests.
+
+## 📄 License
+
+MIT License - See LICENSE file for details.
+
+---
+
+**Enjoy commanding your troops!** 🎖️
